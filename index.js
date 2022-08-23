@@ -26,6 +26,12 @@ app.get("/api/resources", (req, res) => {
   res.send(resources);
 })
 
+app.post("/api/resources", (req, res) => {
+  const resources = getResources();
+  console.log('Data Received');
+  res.send("Data Received");
+})
+
 app.listen(PORT, () => {
   console.log("Server is listening on port:" + PORT);
 })
