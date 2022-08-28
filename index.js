@@ -12,6 +12,8 @@ var corsOptions = {
   optionsSuccessStatus: 200
 }
 
+app.use(express.json());
+
 app.use(cors(corsOptions));
 
 const getResources = () => JSON.parse(fs.readFileSync(pathToFile));
@@ -28,8 +30,20 @@ app.get("/api/resources", (req, res) => {
 
 app.post("/api/resources", (req, res) => {
   const resources = getResources();
-  console.log('Data Received');
-  res.send("Data Received");
+  const resource = req.body;
+
+  resource.createdAt = new Date();
+  resource.status = "inactive";
+  resource.id = Date.now().toString();
+  resources.unshift(resource);
+
+  fs.writeFile(pathToFile, JSON.stringify(resources, null, 2), (error) => {
+    if (error) {
+      return res.status(422).send("Cannot store data in the file!");
+    }
+
+    return res.send("Data has been saved!");
+  })
 })
 
 app.listen(PORT, () => {
